@@ -1,14 +1,18 @@
+set -e
 img=$1
 
 sep="------------------------------------------------------------------"
-echo ""
+
+if ! [ -f "$img" ]; then
+	echo "Error! $img not found... "
+	exit
+fi
 
 compute () {
 	echo "scale=$2; $1" | bc -l
 }
 
 dev=$(losetup -f)
-
 modprobe loop;
 losetup $dev $img;
 partprobe $dev;
@@ -29,6 +33,7 @@ target_gb=$(compute "$target_kb/1000000" 2)
 initial_mb=$(compute "$initial/1000000" 2)
 initial_gb=$(compute "$initial/1000000000" 2)
 
+echo ""
 printf "Device details\n$sep\n"
 
 parted $dev print
