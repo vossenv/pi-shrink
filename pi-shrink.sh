@@ -52,15 +52,15 @@ parted -a opt $dev ---pretend-input-tty resizepart $part_count "${target_kb}kB" 
 echo "Expanding filesystem to fill partition..."
 resize2fs $part
 
+echo "Unmounting $dev... "
+losetup -d $dev
+
+echo "Waiting for unmount... "
+sleep 5
+
 echo "Truncating raw image file..."
 disk=($(fdisk -l $img | grep "img2"))
 truncate --size=$[(${disk[2]}+1)*$blocksize] $img
-
-printf "\nCheck filesystem...\n$sep\n"
-fsck $part
-
-echo "Unmounting $dev..."
-losetup -d $dev
 
 echo "Process complete!"
 echo "" 
