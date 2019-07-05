@@ -20,6 +20,10 @@ If you're on windows, I recommend spinning up a headless ubuntu box from vagrant
 
 `./pi-shrink.sh myimage.img`
 
+or, run straight from this repo without downloading:
+
+`sudo sh -c 'wget -O ps.sh https://git.io/fj6Pj; chmod +x ps.sh; ./ps.sh myimg.img; rm ps.sh;'`
+
 **NOTE: You should make a backup of your original image before running, as this script will operate on the image iteself.  Once you are satisfied with the result, you can safely delete the backup copy**
 
 The image should now be shrunk to it's minimum allowable size! It can now be easily written onto any SD card with Win32DiskImager or some other imageing utility.  Just remember to expand the pi filesystem afterwards to get the rest of the SD card's space.
