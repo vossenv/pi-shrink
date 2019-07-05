@@ -14,7 +14,7 @@ https://softwarebakery.com//shrinking-images-on-linux
 
 I was  able to succesfully shrink my Pi images using the above guide, but I also found myself wanting for a more streamlined process.  After all, most of us who aren't running on a linux platform don't have the same luxury of just opening up GParted, tweaking a few buttons, and cutting the extra space.  My preference is also to automate solutions wherever possible, and GParted simply isn't conducive to this - even if it were readily available.
 
-This script attempts to automate the steps described in the above link using some alternatives to GParted - namely parted and resize2fs - both commonly found on linux platforms.
+This script attempts to automate the steps described in the above link using some alternatives to GParted - namely **parted** and **resize2fs** - both commonly found on linux platforms.
 
 If you're on windows, I recommend spinning up a headless ubuntu box from vagrant.  This only takes a few minutes, and you can easily access the Pi image from within after you SSH in.  This is all you need to do to gain access to the linux environment and shrink your image.  Once you have a linux environment up and can access the image file, all you need to do is run the script using your image name as the argument:
 
