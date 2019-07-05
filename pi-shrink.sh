@@ -1,20 +1,81 @@
-set -e
+
+# Pi Shrink
+# Script intended to shrink image files from raspberry pi down
+# to minimum size for storage and reuse on any SD card
+# Credit for process to: https://softwarebakery.com//shrinking-images-on-linux
+# Danimae Vosssen 2019
+
+echo ""
+echo "Pi Shrink v1.0.0"
+echo "https://github.com/vossenv/pi-shrink"
+echo "Based on: https://softwarebakery.com//shrinking-images-on-linux"
+
+usage="
+Pi Shrink is a script to shrink Raspberry Pi images to minimum size...
+
+usage:
+$(basename "$0") myimage.img [-h] [-d]
+
+where:
+    -h, --help  show this help text
+    -d, --debug  shows all operations\n\n"
+
 img=$1
 
-sep="------------------------------------------------------------------"
+while [[ $# -gt 0 ]]; do
+key=$2
+case $key in
+	--help|-h) 
+		printf "$usage"
+		exit ;;
+    --debug|-d)
+		set -ex
+        shift ;;
+    *) set -e
+		shift;;		
+esac
+done
 
 if ! [ -f "$img" ]; then
 	echo "Error! $img not found... "
 	exit
 fi
 
-compute () {
+function cleanup() {
+	if ! [ $? = 0 ]; then
+		echo "Critical error! Unmounting $dev and exiting... "
+		losetup -d $dev &> /dev/null
+	fi
+}
+
+function compute () {
 	echo "scale=$2; $1" | bc -l
 }
 
-dev=$(losetup -f)
-trap "printf 'Critical error - unmounting $dev and aborting...\n\n'; losetup -d $dev" EXIT
+function printColor(){
+    case $2 in
+        "black") col=0;;
+          "red") col=1;;
+        "green") col=2;;
+       "yellow") col=3;;
+         "blue") col=4;;
+      "magenta") col=5;;
+         "cyan") col=6;;
+        "white") col=7;;
+              *) col=7;;
+    esac
+    printf "$(tput setaf $col)$1$(tput sgr 0)\n"
+}
 
+function printBanner() {
+	sep="------------------------------------------------------------------"	
+	printColor "$1\n$sep\n" green	
+}
+
+trap "cleanup" EXIT
+ 
+header_color="cyan"
+dev=$(losetup -f)
 modprobe loop;
 losetup $dev $img;
 partprobe $dev;
@@ -35,13 +96,10 @@ target_gb=$(compute "$target_kb/1000000" 2)
 initial_mb=$(compute "$initial/1000000" 2)
 initial_gb=$(compute "$initial/1000000000" 2)
 
-echo ""
-printf "Device details\n$sep\n"
-
+printBanner "\nDevice details"
 parted $dev print
 
-echo "" 
-printf "Partition details\n$sep\n"
+printBanner "\nPartition details"
 echo "Image file: $img"
 echo "Mounted as loop on: $dev"
 echo "Partitions: $part_count"
@@ -57,38 +115,34 @@ case $yn in
 	* ) losetup -d $dev; exit;;
 esac
 
-printf "\nBegin processing\n$sep\n"
-echo "Preparing filesystem... "
-e2fsck -fy $part
+printBanner "\nBegin processsing"
+printColor "Preparing filesystem... " $header_color
+e2fsck -f $part
 
-echo ""
-echo "Shrinking filesystem to minimum size... "
+printColor "\nShrinking filesystem to minimum size... " $header_color
 resize2fs $part -M 
 
-echo "Shrinking partition to ${target_mb} MB... "
-parted -a opt $dev ---pretend-input-tty resizepart $part_count "${target_kb}kB" Yes
+printColor "Shrinking partition to ${target_mb} MB... " $header_color
+parted -a opt $dev ---pretend-input-tty resizepart $part_count "${target_kb}kB" 
 
-echo "Expanding filesystem to fill partition..."
+printColor "Expanding filesystem to fill partition..." $header_color
 resize2fs $part
 
-echo "Unmounting $dev... "
+printColor "Unmounting $dev... " $header_color
 losetup -d $dev
 
-echo "Waiting for unmount... "
+echo "Waiting for 5s unmount... "
 sleep 5
 
-echo "Truncating raw image file..."
+printColor "\nTruncating raw image file..." $header_color
 disk=($(fdisk -l $img | grep "img2"))
 truncate --size=$[(${disk[2]}+1)*$blocksize] $img
 
-echo ""
-echo "Finalize... "
+printColor "\nFinalize... " $header_color
 losetup $dev $img;
-e2fsck -f $part
-
-echo ""
+e2fsck -fy $part
 echo "Unmounting $dev... "
 losetup -d $dev
 
-echo "Process complete!"
+printBanner "\nProcess complete!"
 echo "" 
