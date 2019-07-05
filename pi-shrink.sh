@@ -7,7 +7,6 @@ compute () {
 	echo "scale=$2; $1" | bc -l
 }
 
-# img='test.img';
 dev=$(losetup -f)
 
 modprobe loop;
@@ -54,7 +53,7 @@ echo "Expanding filesystem to fill partition..."
 resize2fs $part
 
 echo "Truncating raw image file..."
-disk=($(fdisk -l test.img | grep "img2"))
+disk=($(fdisk -l $img | grep "img2"))
 truncate --size=$[(${disk[2]}+1)*$blocksize] $img
 
 printf "\nCheck filesystem...\n$sep\n"
