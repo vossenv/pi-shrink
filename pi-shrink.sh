@@ -43,6 +43,18 @@ echo "Initial size: $initial_mb MB / $initial_gb GB"
 echo "Target size: $target_mb MB / $target_gb GB"
 
 echo ""
+
+read -p "Proceed (y/n)[y]? " yn
+case $yn in
+	[Yy]|Yes|yes|'' );;
+	* ) losetup -d $dev; exit;;
+esac
+
+printf "\nBegin processing\n$sep\n"
+echo "Preparing filesystem... "
+e2fsck -f $part
+
+echo ""
 echo "Shrinking filesystem to minimum size... "
 resize2fs $part -M 
 
@@ -61,6 +73,15 @@ sleep 5
 echo "Truncating raw image file..."
 disk=($(fdisk -l $img | grep "img2"))
 truncate --size=$[(${disk[2]}+1)*$blocksize] $img
+
+echo ""
+echo "Finalize... "
+losetup $dev $img;
+e2fsck -f $part
+
+echo ""
+echo "Unmounting $dev... "
+losetup -d $dev
 
 echo "Process complete!"
 echo "" 
