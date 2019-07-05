@@ -8,7 +8,7 @@
 echo ""
 echo "Pi Shrink v1.0.0"
 echo "https://github.com/vossenv/pi-shrink"
-echo "Based on: https://softwarebakery.com//shrinking-images-on-linux"
+echo "Based on: https://softwarebakery.com/shrinking-images-on-linux"
 
 usage="
 Pi Shrink is a script to shrink Raspberry Pi images to minimum size...
@@ -41,18 +41,18 @@ if ! [ -f "$img" ]; then
 	exit
 fi
 
-function cleanup() {
+cleanup() {
 	if ! [ $? = 0 ]; then
 		echo "Critical error! Unmounting $dev and exiting... "
 		losetup -d $dev &> /dev/null
 	fi
 }
 
-function compute () {
+compute () {
 	echo "scale=$2; $1" | bc -l
 }
 
-function printColor(){
+printColor(){
     case $2 in
         "black") col=0;;
           "red") col=1;;
@@ -67,7 +67,7 @@ function printColor(){
     printf "$(tput setaf $col)$1$(tput sgr 0)\n"
 }
 
-function printBanner() {
+printBanner() {
 	sep="------------------------------------------------------------------"	
 	printColor "$1\n$sep\n" green	
 }
@@ -145,4 +145,3 @@ echo "Unmounting $dev... "
 losetup -d $dev
 
 printBanner "\nProcess complete!"
-echo "" 
