@@ -13,6 +13,8 @@ compute () {
 }
 
 dev=$(losetup -f)
+trap "printf 'Critical error - unmounting $dev and aborting...\n\n'; losetup -d $dev" EXIT
+
 modprobe loop;
 losetup $dev $img;
 partprobe $dev;
@@ -57,7 +59,7 @@ esac
 
 printf "\nBegin processing\n$sep\n"
 echo "Preparing filesystem... "
-e2fsck -f $part
+e2fsck -fy $part
 
 echo ""
 echo "Shrinking filesystem to minimum size... "
