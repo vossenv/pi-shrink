@@ -57,7 +57,7 @@ echo "Truncating raw image file..."
 disk=($(fdisk -l test.img | grep "img2"))
 truncate --size=$[(${disk[2]}+1)*$blocksize] $img
 
-printf "Check filesystem...\n$sep\n"
+printf "\nCheck filesystem...\n$sep\n"
 fsck $part
 
 echo "Unmounting $dev..."
