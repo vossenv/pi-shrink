@@ -27,51 +27,78 @@ The image should now be shrunk to it's minimum allowable size! It can now be eas
 
 Example output:
 
-```
+```root@vagrant# ./pi-shrink.sh myimage.img
+
+Pi Shrink v1.0.0
+https://github.com/vossenv/pi-shrink
+Based on: https://softwarebakery.com/shrinking-images-on-linux
+
 Device details
 ------------------------------------------------------------------
+
 Model: Loopback device (loopback)
-Disk /dev/loop0: 2898MB
+Disk /dev/loop0: 31.9GB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
 Number  Start   End     Size    Type     File system  Flags
  1      4194kB  273MB   268MB   primary  fat32        lba
- 2      277MB   2898MB  2621MB  primary  ext4
-
+ 2      277MB   31.9GB  31.6GB  primary  ext4
 
 Partition details
 ------------------------------------------------------------------
-Image file: test.img
+
+Image file: myimage.img
 Mounted as loop on: /dev/loop0
 Partitions: 2
 Target partion: /dev/loop0p2
-Initial size: 2898.26 MB / 2.89 GB
-Target size: 2413.46 MB / 2.41 GB
+Initial size: 31914.98 MB / 31.91 GB
+Target size: 2410.30 MB / 2.41 GB
+
+Proceed (y/n)[y]?
+
+Begin processsing
+------------------------------------------------------------------
+
+Preparing filesystem...
+e2fsck 1.44.1 (24-Mar-2018)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+rootfs: 44403/117360 files (0.2% non-contiguous), 340066/489536 blocks
 
 Shrinking filesystem to minimum size...
 resize2fs 1.44.1 (24-Mar-2018)
-Resizing the filesystem on /dev/loop0p2 to 475367 (4k) blocks.
-The filesystem on /dev/loop0p2 is now 475367 (4k) blocks long.
+Resizing the filesystem on /dev/loop0p2 to 474577 (4k) blocks.
+The filesystem on /dev/loop0p2 is now 474577 (4k) blocks long.
 
-Shrinking partition to 2413.46 MB...
+Shrinking partition to 2410.30 MB...
 Warning: Shrinking a partition can cause data loss, are you sure you want to continue?
 Information: You may need to update /etc/fstab.
 
 Expanding filesystem to fill partition...
 resize2fs 1.44.1 (24-Mar-2018)
-Resizing the filesystem on /dev/loop0p2 to 521641 (4k) blocks.
-The filesystem on /dev/loop0p2 is now 521641 (4k) blocks long.
+Resizing the filesystem on /dev/loop0p2 to 520870 (4k) blocks.
+The filesystem on /dev/loop0p2 is now 520870 (4k) blocks long.
 
-Waiting for mount operation to finish...
+Unmounting /dev/loop0...
+Waiting for 5s unmount...
+
 Truncating raw image file...
 
-Check filesystem...
-------------------------------------------------------------------
-fsck from util-linux 2.31.1
+Finalize...
 e2fsck 1.44.1 (24-Mar-2018)
-rootfs: clean, 44403/125184 files, 340557/521641 blocks
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+rootfs: 44403/125184 files (0.2% non-contiguous), 340557/520870 blocks
 Unmounting /dev/loop0...
+
 Process complete!
+------------------------------------------------------------------
 ```

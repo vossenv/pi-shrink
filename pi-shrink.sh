@@ -20,18 +20,21 @@ where:
     -h, --help  show this help text
     -d, --debug  shows all operations\n\n"
 
-img=$1
-
 while [[ $# -gt 0 ]]; do
-key=$2
+key=$1
 case $key in
 	--help|-h) 
 		printf "$usage"
 		exit ;;
     --debug|-d)
 		set -ex
-        shift ;;
-    *) set -e
+    shift ;;
+    --no-copy|-nc)
+		no_copy=1
+    shift ;;    
+    *)
+    img=$key
+    set -e
 		shift;;		
 esac
 done
@@ -69,12 +72,21 @@ printColor(){
 
 printBanner() {
 	sep="------------------------------------------------------------------"	
-	printColor "$1\n$sep\n" green	
+	printColor "$1\n$sep" green	
 }
 
 trap "cleanup" EXIT
- 
 header_color="cyan"
+
+if ! [ $no_copy ]; then
+  printBanner "\n\nPreparing image... "
+  filename="shrunk_${img}"
+  echo "Making a copy of original... "
+  echo "Image will be called $filename"
+  rsync --info=progress2 $img $filename 
+  img=$filename
+fi
+
 dev=$(losetup -f)
 modprobe loop;
 losetup $dev $img;
@@ -94,12 +106,12 @@ target_kb=$(compute "$target*4 + ${blocksize}000" 0)
 target_mb=$(compute "$target_kb/1000" 2)
 target_gb=$(compute "$target_kb/1000000" 2)
 initial_mb=$(compute "$initial/1000000" 2)
-initial_gb=$(compute "$initial/1000000000" 2)
+initial_gb=$(compute "$initial/1000000000" 3)
 
 printBanner "\nDevice details"
 parted $dev print
 
-printBanner "\nPartition details"
+printBanner "Partition details"
 echo "Image file: $img"
 echo "Mounted as loop on: $dev"
 echo "Partitions: $part_count"
@@ -123,7 +135,7 @@ printColor "\nShrinking filesystem to minimum size... " $header_color
 resize2fs $part -M 
 
 printColor "Shrinking partition to ${target_mb} MB... " $header_color
-parted -a opt $dev ---pretend-input-tty resizepart $part_count "${target_kb}kB" 
+parted -a opt $dev ---pretend-input-tty resizepart $part_count "${target_kb}kB"  Yes
 
 printColor "Expanding filesystem to fill partition..." $header_color
 resize2fs $part
@@ -136,7 +148,11 @@ sleep 5
 
 printColor "\nTruncating raw image file..." $header_color
 disk=($(fdisk -l $img | grep "img2"))
-truncate --size=$[(${disk[2]}+1)*$blocksize] $img
+sz=$(compute "(${disk[2]}+1)*$blocksize" 0)
+sz_gb=$(compute "$sz/1000000000" 3)
+
+echo "Final size will be $sz_gb GB"
+truncate --size=$sz $img
 
 printColor "\nFinalize... " $header_color
 losetup $dev $img;
@@ -145,3 +161,4 @@ echo "Unmounting $dev... "
 losetup -d $dev
 
 printBanner "\nProcess complete!"
+echo "Succesfully shrunk image from $initial_gb GB to $sz_gb GB!"
