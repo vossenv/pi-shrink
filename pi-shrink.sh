@@ -1,6 +1,4 @@
 #!/bin/bash
-trap "cleanup" EXIT
-header_color="cyan"
 
 # Pi Shrink
 # Script intended to shrink image files from raspberry pi down
@@ -76,6 +74,9 @@ printBanner() {
 }
 
 #### Script begins here
+
+trap "cleanup" EXIT
+header_color="cyan"
 
 if [[ ! -f "$img" ]]; then
 	echo "Error! $img not found... "
