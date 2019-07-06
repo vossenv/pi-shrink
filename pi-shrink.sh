@@ -1,10 +1,6 @@
 trap "cleanup"
 header_color="cyan"
 
-abort () {
-  (return 0 2>/dev/null) && return || exit 0
-}
-
 # Pi Shrink
 # Script intended to shrink image files from raspberry pi down
 # to minimum size for storage and reuse on any SD card
@@ -32,7 +28,8 @@ while [[ $# -gt 0 ]]; do
   case $key in
        --help|-h) 
                 printf "$usage"
-                abort ;;
+                (return 0 2>/dev/null) && return || exit 0 
+                ;;
       --debug|-d)
                 set -exu
                 shift ;;
@@ -83,7 +80,7 @@ printBanner() {
 
 if [[ ! -f "$img" ]]; then
 	echo "Error! $img not found... "
-	abort
+	(return 0 2>/dev/null) && return || exit 0
 fi
 
 
@@ -135,7 +132,7 @@ echo ""
 read -p "Proceed (y/n)[y]? " yn
 case $yn in
 	[Yy]|Yes|yes|'' );;
-	* ) losetup -d $dev; abort;;
+	* ) losetup -d $dev; (return 0 2>/dev/null) && return || exit 0;;
 esac
 
 printBanner "\nBegin processsing"
