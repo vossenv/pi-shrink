@@ -84,7 +84,7 @@ if [[ ! -f "$img" ]]; then
 fi
 
 
-if [[ ! "$no_copy" ]]; then
+if [[ "$no_copy" = 0 ]]; then
   printBanner "\nPreparing image... "
   filename="shrunk_${img}"
   [[ -f "$filename" ]] && rm $filename
