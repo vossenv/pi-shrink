@@ -79,12 +79,15 @@ if [[ ! -f "$img" ]]; then
 	exit
 fi
 
+
 if [[ ! "$no_copy" ]]; then
   printBanner "\nPreparing image... "
   filename="shrunk_${img}"
+  [[ -f "$filename" ]] && rm $filename
   echo "Making a copy of the original... "
   echo "Image will be called $filename"
   rsync --info=progress2 $img $filename
+  echo "Finished clone, sleeping 5s for disk activity to cease... "
   sleep 5
   img=$filename
 fi
@@ -131,7 +134,7 @@ esac
 
 printBanner "\nBegin processsing"
 printColor "Preparing filesystem... " $header_color
-e2fsck -f $part
+e2fsck -fy $part
 
 printColor "\nShrinking filesystem to minimum size... " $header_color
 resize2fs $part -M 
@@ -164,3 +167,4 @@ losetup -d "$dev"
 
 printBanner "\nProcess complete!"
 echo "Succesfully shrunk image from $initial_gb GB to $sz_gb GB!"
+echo ""
