@@ -1,4 +1,4 @@
-trap "cleanup"
+trap "cleanup" EXIT
 header_color="cyan"
 
 # Pi Shrink
