@@ -20,11 +20,7 @@ If you're on windows, I recommend spinning up a headless ubuntu box from vagrant
 
 To download:
 
-`wget -O ps.sh https://git.io/fj6Az;`
-
-Or
-
-`curl -o ps.sh https://git.io/fj6Az;`
+`wget -O ps.sh https://git.io/fj6Az;` Or `curl -o ps.sh https://git.io/fj6Az;`
 
 Make it executable
 
@@ -43,13 +39,13 @@ usage:
 
 where:
     -h, --help  show this help text
-    -d, --debug  shows all operations\n\n"
+    -d, --debug  shows all operations"
 ```
 
 
 Example output:
 
-```bash
+```
 root@vagrant:# ./pi-shrink.sh myimage.img                          
                                                                                         
 Pi Shrink v1.0.0                                                                        
