@@ -1,3 +1,5 @@
+trap "cleanup" EXIT
+header_color="cyan"
 
 # Pi Shrink
 # Script intended to shrink image files from raspberry pi down
@@ -21,33 +23,28 @@ where:
     -d, --debug  shows all operations\n\n"
 
 while [[ $# -gt 0 ]]; do
-key=$1
-case $key in
-	--help|-h) 
-		printf "$usage"
-		exit ;;
-    --debug|-d)
-		set -ex
-    shift ;;
-    --no-copy|-nc)
-		no_copy=1
-    shift ;;    
-    *)
-    img=$key
-    set -e
-		shift;;		
-esac
+  key=$1
+  case $key in
+       --help|-h) 
+                printf "$usage"
+                exit ;;
+      --debug|-d)
+                set -ex
+                shift ;;
+  --no-copy|-nc)
+                no_copy=1
+                shift ;;    
+              *)
+                img=$key
+                set -e
+                shift;;		
+  esac
 done
 
-if ! [ -f "$img" ]; then
-	echo "Error! $img not found... "
-	exit
-fi
-
 cleanup() {
-	if ! [ $? = 0 ]; then
-		echo "Critical error! Unmounting $dev and exiting... "
-		losetup -d $dev &> /dev/null
+	if [[ ! $? = 0 ]]; then
+		printColor "Critical error! Unmounting $dev and exiting... \n\n" red
+   	losetup -d $dev &> /dev/null
 	fi
 }
 
@@ -75,15 +72,20 @@ printBanner() {
 	printColor "$1\n$sep" green	
 }
 
-trap "cleanup" EXIT
-header_color="cyan"
+#### Script begins here
 
-if ! [ $no_copy ]; then
-  printBanner "\n\nPreparing image... "
+if [[ ! -f "$img" ]]; then
+	echo "Error! $img not found... "
+	exit
+fi
+
+if [[ ! "$no_copy" ]]; then
+  printBanner "\nPreparing image... "
   filename="shrunk_${img}"
-  echo "Making a copy of original... "
+  echo "Making a copy of the original... "
   echo "Image will be called $filename"
-  rsync --info=progress2 $img $filename 
+  rsync --info=progress2 $img $filename
+  sleep 5
   img=$filename
 fi
 
@@ -158,7 +160,7 @@ printColor "\nFinalize... " $header_color
 losetup $dev $img;
 e2fsck -fy $part
 echo "Unmounting $dev... "
-losetup -d $dev
+losetup -d "$dev"
 
 printBanner "\nProcess complete!"
 echo "Succesfully shrunk image from $initial_gb GB to $sz_gb GB!"
