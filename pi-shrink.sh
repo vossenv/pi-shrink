@@ -28,7 +28,7 @@ while [[ $# -gt 0 ]]; do
   case $key in
        --help|-h) 
                 printf "$usage"
-                (return 0 2>/dev/null) && return || exit 0 
+                exit 
                 ;;
       --debug|-d)
                 set -exu
@@ -74,13 +74,11 @@ printBanner() {
 	printColor "$1\n$sep" green	
 }
 
-
-
 #### Script begins here
 
 if [[ ! -f "$img" ]]; then
 	echo "Error! $img not found... "
-	(return 0 2>/dev/null) && return || exit 0
+	exit
 fi
 
 
@@ -132,7 +130,7 @@ echo ""
 read -p "Proceed (y/n)[y]? " yn
 case $yn in
 	[Yy]|Yes|yes|'' );;
-	* ) losetup -d $dev; (return 0 2>/dev/null) && return || exit 0;;
+	* ) losetup -d $dev; exit;;
 esac
 
 printBanner "\nBegin processsing"
