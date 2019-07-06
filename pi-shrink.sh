@@ -16,7 +16,7 @@ usage="
 Pi Shrink is a script to shrink Raspberry Pi images to minimum size...
 
 usage:
-$(basename "$0") myimage.img [-h] [-d]
+./pi-shrink.sh myimage.img [-h] [-d]
 
 where:
     -h, --help  show this help text
