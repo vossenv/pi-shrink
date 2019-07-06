@@ -1,3 +1,4 @@
+#!/bin/bash
 trap "cleanup" EXIT
 header_color="cyan"
 
