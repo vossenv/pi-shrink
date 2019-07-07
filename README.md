@@ -18,6 +18,10 @@ This script attempts to automate the steps described in the above link using som
 
 If you're on windows, I recommend spinning up a headless ubuntu box from vagrant.  This only takes a few minutes, and you can easily access the Pi image from within after you SSH in.  This is all you need to do to gain access to the linux environment and shrink your image. 
 
+Prerequisites: 
+- rsync
+- bc
+
 To download:
 
 `wget -O ps.sh https://git.io/fj6Az;` Or `curl -o ps.sh https://git.io/fj6Az;`
