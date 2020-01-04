@@ -32,7 +32,7 @@ Make it executable
 
 Run the script!
 
-`./pi-shrink.sh myimage.img`
+`sudo ./pi-shrink.sh myimage.img`
 
 This will create a copy by default as a backup, and create the file called shrunk_myimage.img which is of the minimum size! It can now be easily written onto any SD card with Win32DiskImager or some other imageing utility.  Just remember to expand the pi filesystem afterwards to get the rest of the SD card's space.  Once you've validated the shrunk image works, you can safely delete the original.
 
