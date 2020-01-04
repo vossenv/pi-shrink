@@ -24,11 +24,11 @@ Prerequisites:
 
 To download:
 
-`wget -O ps.sh https://git.io/fj6Az;` Or `curl -o ps.sh https://git.io/fj6Az;`
+`wget -O pi-shrink.sh https://git.io/fj6Az;` Or `curl -o pi-shrink.sh https://git.io/fj6Az;`
 
 Make it executable
 
-`chmod +x ps.sh`
+`chmod +x pi-shrink.sh`
 
 Run the script!
 
