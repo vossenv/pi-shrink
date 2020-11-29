@@ -86,7 +86,8 @@ fi
 
 if [[ "$no_copy" = 0 ]]; then
   printBanner "\nPreparing image... "
-  filename="shrunk_${img}"
+  name=$(echo "${img}" | sed "s/.*\///")
+  filename="shrunk_${name}"
   [[ -f "$filename" ]] && rm $filename
   echo "Making a copy of the original... "
   echo "Image will be called $filename"
